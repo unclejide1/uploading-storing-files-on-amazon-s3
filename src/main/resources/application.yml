@@ -1,5 +1,8 @@
 amazonProperties:
   endpointUrl: https://s3.us-east-2.amazonaws.com
-  accessKey: AKIAIDMKDEINLEV2KLFA
-  secretKey: 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
-  bucketName: new-awesome-bucket-1
+  accessKey: AKIA56Y6NLEVO3VOU3PF
+  secretKey: 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
+  bucketName: test-upload-jide
+
+server:
+  port: 8089
