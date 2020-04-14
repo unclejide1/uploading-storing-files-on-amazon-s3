@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
@@ -49,16 +50,26 @@ public class AmazonClient {
                 .build();
     }
 
-    public String uploadFile(byte[] multipartFile, String fileName) {
+    public String uploadFile(byte[] multipartFile, String fileName,String folderName ) {
         String fileUrl = "";
         String uniqueFileName = generateFileName(fileName);
+        String folderFileName = null;
+        if(folderName.trim().isEmpty()){
+            folderFileName = "general/" + uniqueFileName;
+
+        }
+        if(!folderName.trim().isEmpty()){
+            folderFileName = folderName + "/"+uniqueFileName;
+        }
+        System.out.println(folderFileName);
+
         boolean status = false;
         long fileSize = 0;
         try {
             File file = convertBytesToFile(multipartFile,fileName);
-            fileUrl = "https://" + bucketName+ "." +endpointUrl+ "/" + uniqueFileName;
+            fileUrl = "https://" + bucketName+ "." +endpointUrl+ "/" + folderFileName;
             fileSize = (long) file.length()/1024;
-            uploadFileTos3bucket(uniqueFileName, file);
+            uploadFileTos3bucket(folderFileName, file);
 //            file.delete();
         } catch (Exception e) {
            e.printStackTrace();
@@ -92,9 +103,14 @@ public class AmazonClient {
         s3client.putObject(new PutObjectRequest(bucketName, fileName, file).withCannedAcl(CannedAccessControlList.PublicRead));
     }
 
-    public String deleteFileFromS3Bucket(String fileUrl) {
-//        String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
-        s3client.deleteObject(new DeleteObjectRequest(bucketName, fileUrl));
+    public String deleteFileFromS3Bucket(String fileUrl) throws MalformedURLException {
+        String test = "https://" + bucketName+ "." +endpointUrl+ "/";
+        String fileName = fileUrl.substring(fileUrl.indexOf(test) + test.length());
+//        URL aURL = new URL(fileName);
+        System.out.println(fileName);
+
+        System.out.println(fileName);
+        s3client.deleteObject(new DeleteObjectRequest(bucketName, fileName));
         return "Successfully deleted";
     }
 

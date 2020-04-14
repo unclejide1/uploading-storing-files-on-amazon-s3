@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 @RestController
@@ -19,12 +20,12 @@ public class BucketController {
     }
 
     @PostMapping("/uploadFile")
-    public String uploadFile(@RequestPart(value="file") byte[] file, @RequestPart(value="fileName") String fileName) {
-        return this.amazonClient.uploadFile(file, fileName);
+    public String uploadFile(@RequestPart(value="file") byte[] file, @RequestPart(value="fileName") String fileName,  @RequestPart(value="folderName") String folderName) {
+        return this.amazonClient.uploadFile(file, fileName, folderName);
     }
 
     @DeleteMapping("/deleteFile")
-    public String deleteFile(@RequestPart(value = "url") String fileUrl) {
+    public String deleteFile(@RequestPart(value = "url") String fileUrl) throws MalformedURLException {
         return this.amazonClient.deleteFileFromS3Bucket(fileUrl);
     }
 
